@@ -1,0 +1,56 @@
+{
+  "name": "tweetShare",
+  "short_name": "tweetShare",
+  "version": "1.0",
+  "manifest_version": 2,
+  "description": "Share content in seconds.",
+  "icons": {
+//    "16": "images/16.png",
+//    "128": "images/128.png"
+  },
+  "default_locale": "en",
+  "background": {
+    "page": "background.html",
+    "persistent": false
+  },
+  "browser_action": {
+//    "default_icon": {
+//      "19": "images/19.png",
+//      "48": "images/48.png"
+//    },
+    "default_popup": "popup.html",
+    "default_title": "tweetShare"
+  },
+  "omnibox": {
+    "keyword": "tweetShare"
+  },
+  "content_scripts": [{
+    "matches": [
+      "<all_urls>"
+    ],
+    "js": [
+      "scripts/config.js"
+    ],
+    "run_at": "document_end",
+    "all_frames": true
+  }, {
+    "matches": [
+      "http://*/*",
+      "https://*/*"
+    ],
+    "js": [
+      "scripts/contentscript.js"
+    ],
+    "css": ["stylesheets/main.css"],
+    "run_at": "document_start"
+  }],
+  "web_accessible_resources": [],
+  "permissions": [
+    "tabs",
+    "history",
+    "management",
+    "storage",
+    "http://*/*",
+    "https://*/*"
+  ]
+}

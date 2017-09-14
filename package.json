@@ -1,0 +1,19 @@
+{
+  "name": "twittshare",
+  "version": "1.0.0",
+  "description": "sharing for twitter",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/drgrey87/twittShare.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/drgrey87/twittShare/issues"
+  },
+  "homepage": "https://github.com/drgrey87/twittShare#readme"
+}
