@@ -1,6 +1,10 @@
 'use strict';
 
 const port = chrome.runtime.connect({name: "conversation"});
+let is_enable = true;
+get_data('is_enable', (data) => {
+  is_enable = data.is_enable;
+});
 
 document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener("selectionchange", debounce(show_twitter_button, 1000));
@@ -12,15 +16,36 @@ document.addEventListener('DOMContentLoaded', () => {
   button.classList.add('tooltip');
   button.innerHTML = `<span class="twitter-share-button tooltiptext" data-show-count="false"><img src=${iconUrl}></span>`;
   document.body.appendChild(button);
+
+  let tooltip = document.querySelector('.tooltip');
+
+  button.addEventListener('click', (e) => {
+    let text = getSelectionText(),
+      shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
+
+    port.postMessage({type: "create-window", url: shareUrl});
+    tooltip.classList.remove('show');
+  });
 });
 
-function set_data(key, value) {
-  localStorage.setItem(key, value);
+function set_data(data, callback) {
+  chrome.storage.sync.set(data, () => {
+    is_enable = data.is_enable;
+  });
 }
 
-function get_data(string) {
-  return JSON.parse(localStorage.getItem(string));
+function get_data(string, callback) {
+  chrome.storage.sync.get(string, callback);
 }
+
+chrome.storage.onChanged.addListener(function(changes, namespace) {
+  for (let key in changes) {
+    if (key === 'is_enable') {
+      let storageChange = changes[key];
+      return is_enable = storageChange.newValue;
+    }
+  }
+});
 
 function getSelectionText() {
   let text = "",
@@ -58,31 +83,25 @@ function hide_twitter_button() {
 
 function show_twitter_button() {
   let text = getSelectionText();
-  if (text && get_data('is_enable')) {
+  if (text && is_enable) {
     let range = window.getSelection().getRangeAt(0),
       rect = range.getBoundingClientRect(),
       button = document.querySelector('.twitter-share-button'),
-      tooltip = document.querySelector('.tooltip'),
-      shareUrl = 'https://twitter.com/intent/tweet?text=' + text;
+      tooltip = document.querySelector('.tooltip');
     tooltip.style.left = `${window.pageXOffset + (rect.left + (rect.width / 2)) - (button.style.width / 2)}px`;
     tooltip.style.top = `${window.pageYOffset + rect.top - button.style.height - 10}px`;
     tooltip.classList.add('show');
-
-    button.addEventListener('click', (e) => {
-      e.preventDefault();
-      port.postMessage({type: "create-window", url: shareUrl});
-      tooltip.classList.remove('show');
-    });
   }
 }
 
+//from popup
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   switch (msg.type) {
     case "get_enabling":
-      sendResponse(get_data('is_enable'));
+      sendResponse(is_enable);
       break;
     case "post_enabling":
-      set_data('is_enable', msg.enable);
+      set_data({is_enable: msg.enable});
       break;
   }
 });

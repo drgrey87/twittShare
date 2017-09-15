@@ -41,3 +41,7 @@
     opacity: 1;
     cursor: pointer;
 }
+
+.tfw .tooltip.show .tooltiptext {
+    display: none;
+}
