@@ -1,18 +1,5 @@
 'use strict';
 
-chrome.runtime.onInstalled.addListener(function (details) {
- console.log('previousVersion', details.previousVersion);
-});
-
-//listen click of extension icon
-chrome.browserAction.onClicked.addListener(function(tab) {
-console.log('aaaaa');
-  //change body style of mother page
-  //chrome.tabs.sendMessage(tab.id, {type: "change-css-style"});
-  //check user loginization
-  //chrome.tabs.sendMessage(tab.id, {type: "check-loginization"});
-});
-
 //listen events from content script
 chrome.runtime.onConnect.addListener(port => {
   port.onMessage.addListener(msg => {
@@ -30,6 +17,10 @@ chrome.runtime.onConnect.addListener(port => {
           top: Math.round((screen.availHeight - height) / 2)
           //"focused": true
         });
+        break;
+
+      case "enabling":
+        chrome.tabs.sendMessage({type: "check-loginization"});
         break;
     }
   });

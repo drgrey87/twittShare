@@ -31,7 +31,7 @@
     "js": [
       "scripts/config.js"
     ],
-    "run_at": "document_end",
+    "run_at": "document_start",
     "all_frames": true
   }, {
     "matches": [
@@ -44,7 +44,7 @@
     "css": ["stylesheets/main.css"],
     "run_at": "document_start"
   }],
-  "web_accessible_resources": [],
+  "web_accessible_resources": ["images/new.png"],
   "permissions": [
     "tabs",
     "history",
