@@ -11,26 +11,27 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener("click", hide_twitter_button);
 
   document.getElementsByTagName('html')[0].classList.add('tweet-share-extension-installed-in-this-browser');
-  const button = document.createElement("span");
-  const iconUrl = chrome.extension.getURL("images/new.png");
-  button.classList.add('tooltip');
-  button.innerHTML = `<span class="twitter-share-button tooltiptext" data-show-count="false"><img src=${iconUrl}></span>`;
-  document.body.appendChild(button);
+  const tooltip = document.createElement("span");
+  const iconUrl = chrome.extension.getURL("images/icon_btn.svg");
+  tooltip.classList.add('twitter-share-tooltip');
+  tooltip.innerHTML = `<span class="twitter-share-tooltip-text" data-show-count="false"><img class="twitter-share-tooltip-text__btn" src=${iconUrl}></span>`;
+  document.body.appendChild(tooltip);
 
-  let tooltip = document.querySelector('.tooltip');
+  let button = document.querySelector('.twitter-share-tooltip-text__btn');
 
   button.addEventListener('click', (e) => {
     let text = getSelectionText(),
       shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
 
     port.postMessage({type: "create-window", url: shareUrl});
-    tooltip.classList.remove('show');
+    hide_twitter_button();
   });
 });
 
 function set_data(data, callback) {
   chrome.storage.sync.set(data, () => {
     is_enable = data.is_enable;
+    if (callback) callback();
   });
 }
 
@@ -75,7 +76,7 @@ function debounce(func, wait) {
 }
 
 function hide_twitter_button() {
-  let tooltip = document.querySelector('.tooltip');
+  let tooltip = document.querySelector('.twitter-share-tooltip');
   if (tooltip) {
     tooltip.classList.remove('show');
   }
@@ -86,10 +87,10 @@ function show_twitter_button() {
   if (text && is_enable) {
     let range = window.getSelection().getRangeAt(0),
       rect = range.getBoundingClientRect(),
-      button = document.querySelector('.twitter-share-button'),
-      tooltip = document.querySelector('.tooltip');
-    tooltip.style.left = `${window.pageXOffset + (rect.left + (rect.width / 2)) - (button.style.width / 2)}px`;
-    tooltip.style.top = `${window.pageYOffset + rect.top - button.style.height - 10}px`;
+      twitter_share = document.querySelector('.twitter-share-tooltip-text'),
+      tooltip = document.querySelector('.twitter-share-tooltip');
+    tooltip.style.left = `${window.pageXOffset + (rect.left + (rect.width / 2)) - (twitter_share.style.width / 2)}px`;
+    tooltip.style.top = `${window.pageYOffset + rect.top - twitter_share.style.height - 10}px`;
     tooltip.classList.add('show');
   }
 }
@@ -101,7 +102,9 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       sendResponse(is_enable);
       break;
     case "post_enabling":
-      set_data({is_enable: msg.enable});
+      set_data({is_enable: msg.enable}, () => {
+        port.postMessage({type: is_enable ? 'set_on' : 'set_of'});
+      });
       break;
   }
 });

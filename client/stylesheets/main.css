@@ -1,14 +1,12 @@
-.tooltip {
+.twitter-share-tooltip {
     position: absolute;
     display: none;
-    border-bottom: 1px dotted black;
 }
 
-.tooltip .tooltiptext {
+.twitter-share-tooltip .twitter-share-tooltip-text {
     visibility: hidden;
     width: 120px;
     background-color: #555;
-    color: #fff;
     text-align: center;
     border-radius: 6px;
     padding: 5px 0;
@@ -21,7 +19,7 @@
     transition: opacity 1s;
 }
 
-.tooltip .tooltiptext::after {
+.twitter-share-tooltip .twitter-share-tooltip-text::after {
     content: "";
     position: absolute;
     top: 100%;
@@ -32,16 +30,19 @@
     border-color: #555 transparent transparent transparent;
 }
 
-.tooltip.show {
+.twitter-share-tooltip.show {
     display: inline-block;
 }
 
-.tooltip.show .tooltiptext {
+.twitter-share-tooltip.show .twitter-share-tooltip-text {
     visibility: visible;
     opacity: 1;
+}
+
+.twitter-share-tooltip-text .twitter-share-tooltip-text__btn {
     cursor: pointer;
 }
 
-.tfw .tooltip.show .tooltiptext {
+.tfw .twitter-share-tooltip.show .twitter-share-tooltip-text {
     display: none;
 }
